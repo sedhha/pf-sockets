@@ -15,6 +15,10 @@ wss.on('connection', (ws: WebSocket) => {
   });
 });
 
+app.get('/api/ping', (req, res) => {
+  res.send('pong');
+});
+
 server.listen(process.env.PORT ?? 3000, () => {
   console.log(`Server started on port ${process.env.PORT ?? 3000}`);
 });
