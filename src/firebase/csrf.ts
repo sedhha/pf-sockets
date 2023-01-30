@@ -14,13 +14,13 @@ class CSRFSession {
   }
   getSession(key: string, ua: string) {
     const sessionUa = this.data[key];
-    return ua === sessionUa;
+    return ua.toLowerCase() === sessionUa.toLowerCase();
   }
 }
 
-if (!global.session) {
-  global.session = new CSRFSession();
+if (!global.csrfSession) {
+  global.csrfSession = new CSRFSession();
 }
-const session = global.session;
+const session = global.csrfSession;
 
 export default session as CSRFSession;

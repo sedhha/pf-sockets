@@ -2,13 +2,14 @@ import { Request } from 'express';
 import session from '@/firebase/csrf';
 import withGenericIntercept from '@/middlewares/withGenericIntercept';
 import { IApiHandler } from '@/interfaces/rest';
+import { containsSomeFromExpected } from '@/utils/dev-utils';
 
 const addSession: IApiHandler<string> = async (req: Request) => {
   const userAgent = req.headers['user-agent']?.toLowerCase() ?? '';
-  if (req.method !== 'GET' || !req.headers['user-agent'] || !req.headers['user-agent'].length)
+  if (req.method !== 'GET' || (!req.headers['sec-ch-ua-platform'] && !containsSomeFromExpected(userAgent)) || !req.headers['user-agent'])
     return {
-      errored: true,
       status: 422,
+      errored: true,
     };
   const sessionKey = session.addSession(userAgent);
   return {

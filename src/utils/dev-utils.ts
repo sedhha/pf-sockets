@@ -16,3 +16,10 @@ export const throwAndLogError = (logMessage: string): Error => {
   console.error(logMessage);
   throw new Error(logMessage);
 };
+
+export const containsSomeFromExpected = (ua: string): boolean => {
+  const searchParams = ['windows', 'mac', 'linux', 'ios', 'android', 'iphone', 'ios', 'apple', 'safari', 'firefox'];
+  const uaLower = ua.toLowerCase();
+  const available = searchParams.find(element => uaLower.includes(element));
+  return available ? true : false;
+};

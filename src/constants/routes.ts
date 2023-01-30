@@ -6,6 +6,7 @@ const REST_ROUTES = {
 
 const ROOT_ROUTES = {
   REST: '/rest',
+  OPEN: '/open',
 };
 
 export { REST_ROUTES, ROOT_ROUTES };
