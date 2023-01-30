@@ -9,7 +9,6 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "install":"yarn",
     "start": "yarn build && cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "yarn && swc src -d dist --source-maps --copy-files",
