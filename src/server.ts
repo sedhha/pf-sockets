@@ -1,24 +1,22 @@
 import express from 'express';
-import http from 'http';
-import WebSocket from 'ws';
 import { config } from 'dotenv';
+import expressWs from 'express-ws';
+import { ROOT_ROUTES } from '@/constants/routes';
+import restApp from '@/rest/app';
 
 config();
-const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const appBase = express();
+const wsInstance = expressWs(appBase);
+const { app } = wsInstance; // let app = wsInstance.app;
 
-wss.on('connection', (ws: WebSocket) => {
-  ws.on('message', (message: string) => {
-    console.log(`Received message: ${message}`);
-    ws.send(`You sent: ${message}`);
+app.ws('/init-analytics', (ws, req) => {
+  console.log(req.headers['user-agent'], req.headers['sec-ch-ua-platform'] ?? 'unknown');
+  ws.on('message', (msg: string) => {
+    console.log('Message Recieved = ', JSON.parse(msg));
+    ws.send('You sent - ' + msg);
   });
 });
-
-app.get('/api/ping', (req, res) => {
-  res.send('pong');
-});
-
-server.listen(process.env.PORT ?? 3000, () => {
-  console.log(`Server started on port ${process.env.PORT ?? 3000}`);
+app.use(ROOT_ROUTES.REST, restApp);
+app.listen(process.env.PORT ?? 3000, () => {
+  console.log(`Listening on port ${process.env.PORT ?? 3000}`);
 });

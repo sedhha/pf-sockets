@@ -21,17 +21,12 @@
     "importHelpers": true,
     "baseUrl": "src",
     "paths": {
-      "@/*": ["*"],
-      "@config": ["config"],
-      "@controllers/*": ["controllers/*"],
-      "@dtos/*": ["dtos/*"],
-      "@exceptions/*": ["exceptions/*"],
-      "@interfaces/*": ["interfaces/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@models/*": ["models/*"],
-      "@routes/*": ["routes/*"],
-      "@services/*": ["services/*"],
-      "@utils/*": ["utils/*"]
+      "@/utils/*": ["utils/*"],
+      "@/firebase/*": ["firebase/*"],
+      "@/interfaces/*": ["interfaces/*"],
+      "@/constants/*": ["constants/*"],
+      "@/middlewares/*": ["middlewares/*"],
+      "@/rest/*": ["rest/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.json", ".env"],
