@@ -9,7 +9,7 @@ export const println = (...logs: ILogger[] | unknown[]) => {
 };
 
 export const info = (...logs: ILogger[] | unknown[]) => {
-  console.log(...logs);
+  console.log(`[${new Date().toUTCString()}] `, ...logs);
 };
 
 export const throwAndLogError = (logMessage: string): Error => {
@@ -18,7 +18,18 @@ export const throwAndLogError = (logMessage: string): Error => {
 };
 
 export const containsSomeFromExpected = (ua: string): boolean => {
-  const searchParams = ['windows', 'mac', 'linux', 'ios', 'android', 'iphone', 'ios', 'apple', 'safari', 'firefox'];
+  const searchParams = [
+    'windows',
+    'mac',
+    'linux',
+    'ios',
+    'android',
+    'iphone',
+    'ios',
+    'apple',
+    'safari',
+    'firefox',
+  ];
   const uaLower = ua.toLowerCase();
   const available = searchParams.find(element => uaLower.includes(element));
   return available ? true : false;

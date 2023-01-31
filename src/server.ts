@@ -9,21 +9,36 @@ import withCSRFProtect from '@/middlewares/wsCSRFProtect';
 import { IWSResult } from '@/interfaces/webSocket';
 import { IFEGeo, FEventData } from '@/interfaces/analytics';
 import operationHandler, { IData } from '@/firebase/analytics';
+import { supportedOperations } from '@/firebase/constants';
+import { info } from './utils/dev-utils';
 
 const appBase = express();
-const wsInstance = expressWs(appBase);
+const wsInstance: expressWs.Instance = expressWs(appBase);
 const { app } = wsInstance; // let app = wsInstance.app;
 
 app.ws('/track', (ws, req) => {
+  const { csrf } = req.query;
+  const ua = req.headers['user-agent'] as string;
+  info(`| WEB-SOCKET::NEW-CONNECTION ${req.ip} Trying to connect...`);
+  if (!csrf || typeof csrf !== 'string' || !ua) {
+    ws.send(
+      JSON.stringify({
+        status: 401,
+        message: 'Invalid Connection Request - ' + `csrf:${csrf}`,
+        identifier: supportedOperations.closedByServer,
+      } as IWSResult<null>),
+    );
+    info(`Closing Connection:- ${req.url} | CSRF Not Present`);
+    ws.close();
+  }
   ws.on('message', async (msg: string) => {
-    const ua = req.headers['user-agent'] as string;
     const response = withCSRFProtect<IFEGeo | FEventData>({
       ua,
       message: msg,
     });
-    // const { opType } = req.query;
-    // if (response.closeConnection) ws.close();
-    if (!response.actionType || !response.csrf) ws.close();
+    if (!response.actionType || !response.csrf) {
+      ws.close();
+    }
     const result = await operationHandler(
       response.actionType,
       response.csrf,
@@ -38,13 +53,21 @@ app.ws('/track', (ws, req) => {
         payload: result.data,
       } as IWSResult<string | IData>),
     );
+    if (response.actionType === supportedOperations.close) {
+      ws.close();
+    }
   });
-  ws.on('close', (code, reason) => {
-    console.log({ code, reason });
+  ws.on('close', async code => {
+    if (code === 1005) {
+      info(`| WEB-SOCKET::PAUSE Connection: ${code}`);
+      return;
+    }
+    await operationHandler(supportedOperations.forceClose, csrf as string, ua);
+    info(`| WEB-SOCKET::FORCE-CLOSE Connection Code: ${code}`);
   });
 });
 app.use(ROOT_ROUTES.REST, restApp);
 app.use(ROOT_ROUTES.OPEN, serverApp);
 app.listen(process.env.PORT ?? 3000, () => {
-  console.log(`Listening on port ${process.env.PORT ?? 3000}`);
+  info(`| Listening on port ${process.env.PORT ?? 3000}`);
 });

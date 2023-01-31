@@ -4,15 +4,17 @@ import session from '@/firebase/csrf';
 
 const withCSRFProtect = <T>(data: IWebSocket): IWSResponse<T> => {
   const { ua, message } = data;
-  info(`[${new Date().toUTCString()}] | WEB-SOCKET::INIT | ${ua}`);
+  info(`| WEB-SOCKET::INIT | ${ua}`);
   try {
-    const decoded = JSON.parse(Buffer.from(message, 'base64').toString('utf8')) as IWSDecoded<T>;
+    const decoded = JSON.parse(
+      Buffer.from(message, 'base64').toString('utf8'),
+    ) as IWSDecoded<T>;
     const {
       headers: { csrf, actionType },
       body,
     } = decoded;
     if (!csrf || !body || !actionType) {
-      info(`[${new Date().toUTCString()}] | WEB-SOCKET::ERROR | Missing CSRF - ${csrf}`);
+      info(`| WEB-SOCKET::ERROR | Missing CSRF - ${csrf}`);
       return {
         closeConnection: true,
         status: 401,
@@ -21,9 +23,9 @@ const withCSRFProtect = <T>(data: IWebSocket): IWSResponse<T> => {
         csrf,
       };
     }
-    const validSession = session.getSession(csrf, ua);
+    const validSession = session.checkSession(csrf, ua);
     if (validSession) {
-      info(`[${new Date().toUTCString()}] | WEB-SOCKET::SUCCESS::${actionType} | CSRF Safe - ${csrf}`);
+      info(`| WEB-SOCKET::SUCCESS::${actionType} | CSRF Safe - ${csrf}`);
       return {
         closeConnection: false,
         status: 200,
@@ -32,7 +34,7 @@ const withCSRFProtect = <T>(data: IWebSocket): IWSResponse<T> => {
         actionType,
       };
     } else {
-      info(`[${new Date().toUTCString()}] | WEB-SOCKET::FAILURE | CSRF UnSafe - ${csrf}`);
+      info(`| WEB-SOCKET::FAILURE | CSRF UnSafe - ${csrf}`);
       return {
         closeConnection: true,
         status: 401,
@@ -41,7 +43,7 @@ const withCSRFProtect = <T>(data: IWebSocket): IWSResponse<T> => {
       };
     }
   } catch (err) {
-    info(`[${new Date().toUTCString()}] | WEB-SOCKET::ERROR | ${err.message}`);
+    info(`| WEB-SOCKET::ERROR | ${err.message}`);
     return {
       closeConnection: true,
       status: 500,

@@ -27,7 +27,7 @@ const addSession: IApiHandler<string> = async (req: Request) => {
 const getSession: IApiHandler<null> = async (req: Request) => {
   const userAgent = req.headers['user-agent']?.toLowerCase() ?? '';
   const sessionKey = (req.query.session as string) ?? '';
-  const activeSession = session.getSession(sessionKey, userAgent);
+  const activeSession = session.checkSession(sessionKey, userAgent);
   return {
     errored: !activeSession,
     status: activeSession ? 200 : 404,

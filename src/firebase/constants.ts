@@ -9,7 +9,9 @@ const getEnvPrefix = () => {
   }
 };
 const isProd = process.env.NODE_ENV === 'production';
-const isAnalyticsEnabled = JSON.parse(process.env.NEXT_PUBLIC_ANALYTICS_ENABLED ?? 'false');
+const isAnalyticsEnabled = JSON.parse(
+  process.env.NEXT_PUBLIC_ANALYTICS_ENABLED ?? 'false',
+);
 export const storeCollectionPaths = {
   feedback: 'feedback',
   newsletters: 'newsletters',
@@ -20,9 +22,12 @@ export const storeCollectionPaths = {
 
 export const getCollectionPath = (path: string): string => {
   const prefix = getEnvPrefix();
-  const storagePath = storeCollectionPaths[path as keyof typeof storeCollectionPaths];
+  const storagePath =
+    storeCollectionPaths[path as keyof typeof storeCollectionPaths];
   if (!storagePath) {
-    throwAndLogError(`Path for ${path} does not exist. Make sure you want to have a dynamic collection.`);
+    throwAndLogError(
+      `Path for ${path} does not exist. Make sure you want to have a dynamic collection.`,
+    );
     return '';
   }
   return `${prefix}-${storagePath}`;
@@ -35,21 +40,29 @@ export const dbPaths = {
   adminMetaData: 'admin-metadata',
 };
 
-const formRootMessagesPath = () => `${getEnvPrefix()}-${dbPaths.userMessageMetadata}`;
+const formRootMessagesPath = () =>
+  `${getEnvPrefix()}-${dbPaths.userMessageMetadata}`;
 
-const formAdminIsOnlinePath = () => `${getEnvPrefix()}-${dbPaths.adminMetaData}/isOnline`;
+const formAdminIsOnlinePath = () =>
+  `${getEnvPrefix()}-${dbPaths.adminMetaData}/isOnline`;
 
-const formMessagesPath = (uid: string) => `${getEnvPrefix()}-${dbPaths.userMessages}/${uid}/messages`;
+const formMessagesPath = (uid: string) =>
+  `${getEnvPrefix()}-${dbPaths.userMessages}/${uid}/messages`;
 
-const lastModifiedPath = (uid: string) => `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/lastModified`;
+const lastModifiedPath = (uid: string) =>
+  `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/lastModified`;
 
-const emailRefPath = (uid: string) => `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/emailOfSender`;
+const emailRefPath = (uid: string) =>
+  `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/emailOfSender`;
 
-const readRecipientPath = (uid: string) => `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/readByMe`;
+const readRecipientPath = (uid: string) =>
+  `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/readByMe`;
 
-const readRecipientPathUser = (uid: string) => `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/readByUser`;
+const readRecipientPathUser = (uid: string) =>
+  `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/readByUser`;
 
-const latestMessagePath = (uid: string) => `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/latestMessage`;
+const latestMessagePath = (uid: string) =>
+  `${getEnvPrefix()}-${dbPaths.userMessageMetadata}/${uid}/latestMessage`;
 
 const typingUserPath = (uid: string, isVisitor: boolean) =>
   isVisitor
@@ -66,7 +79,9 @@ const getDBPath = (path: string): string => {
   const prefix = getEnvPrefix();
   const storagePath = dbPaths[path as keyof typeof dbPaths];
   if (!storagePath) {
-    throwAndLogError(`Path for ${path} does not exist. Make sure you want to have a dynamic collection.`);
+    throwAndLogError(
+      `Path for ${path} does not exist. Make sure you want to have a dynamic collection.`,
+    );
     return '';
   }
   return `${prefix}-${storagePath}`;
@@ -91,6 +106,7 @@ const supportedOperations = {
   start: 'start',
   close: 'close',
   forceClose: 'forceClose',
+  closedByServer: 'closedByServer',
 } as const;
 export type SupportedOps = keyof typeof supportedOperations;
 

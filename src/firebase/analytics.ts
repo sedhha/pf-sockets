@@ -12,7 +12,13 @@ import {
 } from '@/interfaces/analytics';
 import { firestore } from 'firebase-admin';
 import crypto from 'crypto';
-import { getEventPath, getGeoPath, getSessionPath, isAnalyticsEnabled, supportedOperations } from '@/firebase/constants';
+import {
+  getEventPath,
+  getGeoPath,
+  getSessionPath,
+  isAnalyticsEnabled,
+  supportedOperations,
+} from '@/firebase/constants';
 import { store } from '@/firebase/index';
 import session from './csrf';
 
@@ -28,7 +34,11 @@ export type IData = {
   paths: IPaths;
 };
 
-const getGenericInit = (visitorID: string, csrfToken: string, ua: string): IAnalyticsCollection => ({
+const getGenericInit = (
+  visitorID: string,
+  csrfToken: string,
+  ua: string,
+): IAnalyticsCollection => ({
   user: 'Unknown',
   visitorID: visitorID,
   csrfToken: csrfToken ?? 'Unknown',
@@ -64,7 +74,11 @@ const getGenericInit = (visitorID: string, csrfToken: string, ua: string): IAnal
   totalVisits: 1,
 });
 
-const getSessionInit = (identifier: string, csrfToken: string, ua: string): ISessionCollection => ({
+const getSessionInit = (
+  identifier: string,
+  csrfToken: string,
+  ua: string,
+): ISessionCollection => ({
   visitorID: identifier,
   csrfToken: csrfToken,
   fp_visitorID: identifier,
@@ -83,10 +97,15 @@ const initiateGeoEntry = async (path: string, data: IAnalyticsCollection) => {
       .doc(path)
       .get()
       .then(async snapshot => {
-        const filteredData = Object.fromEntries(Object.entries(data).filter(([_, value]) => value != null));
-        if (snapshot.exists) await store.doc(path).update(filteredData as Record<string, any>);
+        const filteredData = Object.fromEntries(
+          Object.entries(data).filter(([_, value]) => value != null),
+        );
+        if (snapshot.exists)
+          await store.doc(path).update(filteredData as Record<string, any>);
         else {
-          const filteredData = Object.fromEntries(Object.entries(data).filter(([_, value]) => value != null));
+          const filteredData = Object.fromEntries(
+            Object.entries(data).filter(([_, value]) => value != null),
+          );
           await store.doc(path).set(filteredData);
         }
       }))
@@ -99,11 +118,16 @@ const updateGeoEntry = async (path: string, data: IViewedData) =>
     .doc(path)
     .get()
     .then(snapshot => {
-      const filteredData = Object.fromEntries(Object.entries(data).filter(([key, value]) => value != null));
-      if (snapshot.exists) store.doc(path).update(filteredData as Record<string, any>);
+      const filteredData = Object.fromEntries(
+        Object.entries(data).filter(([key, value]) => value != null),
+      );
+      if (snapshot.exists)
+        store.doc(path).update(filteredData as Record<string, any>);
     }));
 
-const getInitEntry = async (path: string): Promise<boolean | IAnalyticsCollection> =>
+const getInitEntry = async (
+  path: string,
+): Promise<boolean | IAnalyticsCollection> =>
   isAnalyticsEnabled &&
   (await store
     .doc(path)
@@ -125,19 +149,26 @@ const addEvents = async (eventData: IEventsCollection[], eventPath: string) => {
   await Promise.all(eventPromises);
 };
 
-const addSessionData = async (sessionPath: string, newSnapshot: ISessionCollection) => {
+const addSessionData = async (
+  sessionPath: string,
+  newSnapshot: ISessionCollection,
+) => {
   if (!isAnalyticsEnabled) return;
   const doc = store.doc(sessionPath);
   await doc.get().then(async snapshot => {
     if (snapshot.exists) {
       const existingSnapshot = snapshot.data() as ISessionCollection;
-      const filteredData = Object.fromEntries(Object.entries(newSnapshot).filter(([key, value]) => value != null));
-      const lastHundredConnections = existingSnapshot.lastHundredConnections.slice(0, 99).concat({
-        connectedAt: newSnapshot.latestConnectedAt.toMillis(),
-        disconnectedAt: newSnapshot.latestDisconnectedAt.toMillis(),
-        duration: newSnapshot.latestDuration,
-        disconnectedForcefully: newSnapshot.latestDisconnectedForcefully,
-      });
+      const filteredData = Object.fromEntries(
+        Object.entries(newSnapshot).filter(([key, value]) => value != null),
+      );
+      const lastHundredConnections = existingSnapshot.lastHundredConnections
+        .slice(0, 99)
+        .concat({
+          connectedAt: newSnapshot.latestConnectedAt.toMillis(),
+          disconnectedAt: newSnapshot.latestDisconnectedAt.toMillis(),
+          duration: newSnapshot.latestDuration,
+          disconnectedForcefully: newSnapshot.latestDisconnectedForcefully,
+        });
       await doc.update({
         ...filteredData,
         lastHundredConnections,
@@ -156,7 +187,12 @@ class Analytics {
     this.data = {};
   }
 
-  async createEntity({ fp_visitorID, visitorID, csrfToken, ua }: IAnalyticsInit): Promise<string> {
+  async createEntity({
+    fp_visitorID,
+    visitorID,
+    csrfToken,
+    ua,
+  }: IAnalyticsInit): Promise<string> {
     let identifier = '';
     if (!(fp_visitorID ?? visitorID)) identifier = crypto.randomUUID();
     else identifier = (visitorID ?? fp_visitorID) as string;
@@ -170,7 +206,9 @@ class Analytics {
         generic: genericData
           ? {
               ...(genericData as IAnalyticsCollection),
-              totalVisits: ((genericData as IAnalyticsCollection).totalVisits ?? 1) + 1,
+              totalVisits:
+                ((genericData as IAnalyticsCollection).totalVisits ?? 1) + 1,
+              csrfToken,
             }
           : getGenericInit(identifier, csrfToken, ua),
         session: getSessionInit(identifier, csrfToken, ua),
@@ -197,9 +235,13 @@ class Analytics {
       fp_browserVersion: data.fp_browserVersion,
       fp_confidenceScore: data.fp_confidenceScore,
       fp_device: data.fp_device,
-      fp_firstSeenAt_global: data.fp_firstSeenAt_global ? firestore.Timestamp.fromDate(new Date(data.fp_firstSeenAt_global)) : undefined,
+      fp_firstSeenAt_global: data.fp_firstSeenAt_global
+        ? firestore.Timestamp.fromDate(new Date(data.fp_firstSeenAt_global))
+        : undefined,
       fp_firstSeenAt_subscription: data.fp_firstSeenAt_subscription
-        ? firestore.Timestamp.fromDate(new Date(data.fp_firstSeenAt_subscription))
+        ? firestore.Timestamp.fromDate(
+            new Date(data.fp_firstSeenAt_subscription),
+          )
         : undefined,
       fp_incognito: data.fp_incognito,
       fp_ip: data.fp_ip,
@@ -214,9 +256,13 @@ class Analytics {
       fp_postCode: data.fp_postCode,
       fp_subDivision: data.fp_subDivision,
       fp_timezone: data.fp_timezone,
-      fp_lastSeenAt_global: data.fp_lastSeenAt_global ? firestore.Timestamp.fromDate(new Date(data.fp_lastSeenAt_global)) : undefined,
+      fp_lastSeenAt_global: data.fp_lastSeenAt_global
+        ? firestore.Timestamp.fromDate(new Date(data.fp_lastSeenAt_global))
+        : undefined,
       fp_lastSeenAt_subscription: data.fp_lastSeenAt_subscription
-        ? firestore.Timestamp.fromDate(new Date(data.fp_lastSeenAt_subscription))
+        ? firestore.Timestamp.fromDate(
+            new Date(data.fp_lastSeenAt_subscription),
+          )
         : undefined,
       fp_metaVersion: data.fp_metaVersion,
       fp_OS: data.fp_OS,
@@ -254,11 +300,15 @@ class Analytics {
       uid: data.uid,
       email: data.email,
     };
-    await initiateGeoEntry(this.data[identifier].paths.geoCollectionPath, this.data[identifier].generic);
+    await initiateGeoEntry(
+      this.data[identifier].paths.geoCollectionPath,
+      this.data[identifier].generic,
+    );
   }
   upsertEventData(identifier: string, data: IEventData[]): IData | void {
     if (!this.data[identifier]) return;
-    const { visitorID, csrfToken, fp_visitorID, ua } = this.data[identifier].generic;
+    const { visitorID, csrfToken, fp_visitorID, ua } =
+      this.data[identifier].generic;
     this.data[identifier].events = data.map(event => ({
       ...event,
       visitorID,
@@ -269,12 +319,34 @@ class Analytics {
     return this.data[identifier];
   }
 
+  getSessionData(identifier: string): FEventData | void {
+    if (!this.data[identifier]) return;
+    const data: FEventData = {
+      key: identifier,
+      eventData: this.data[identifier].events,
+      workViewed: this.data[identifier].generic.workViewed,
+      awardsViewed: this.data[identifier].generic.awardsViewed,
+      blogViewed: this.data[identifier].generic.blogViewed,
+      contactViewed: this.data[identifier].generic.contactViewed,
+      projectsViewed: this.data[identifier].generic.projectsViewed,
+      videosViewed: this.data[identifier].generic.videosViewed,
+      testimonialsViewed: this.data[identifier].generic.testimonialsViewed,
+      techStackViewed: this.data[identifier].generic.techStackViewed,
+      email: this.data[identifier].generic.email,
+      uid: this.data[identifier].generic.uid,
+    };
+    return data;
+  }
+
   async closeSessionAbruptly(data: FEventData): Promise<void> {
     const identifier = data.key;
     if (!this.data[identifier]) return;
-    this.data[identifier].session.latestDisconnectedAt = firestore.Timestamp.now();
+    this.data[identifier].session.latestDisconnectedAt =
+      firestore.Timestamp.now();
     this.data[identifier].session.latestDuration =
-      (this.data[identifier].session.latestDisconnectedAt.toMillis() - this.data[identifier].session.latestConnectedAt.toMillis()) / 1000;
+      (this.data[identifier].session.latestDisconnectedAt.toMillis() -
+        this.data[identifier].session.latestConnectedAt.toMillis()) /
+      1000;
     this.data[identifier].session.latestDisconnectedForcefully = true;
 
     // View Details
@@ -297,7 +369,8 @@ class Analytics {
         contactViewed: this.data[identifier].generic.contactViewed ?? false,
         projectsViewed: this.data[identifier].generic.projectsViewed ?? false,
         videosViewed: this.data[identifier].generic.videosViewed ?? false,
-        testimonialsViewed: this.data[identifier].generic.testimonialsViewed ?? false,
+        testimonialsViewed:
+          this.data[identifier].generic.testimonialsViewed ?? false,
         techStackViewed: this.data[identifier].generic.techStackViewed ?? false,
       }),
       addEvents(
@@ -310,17 +383,24 @@ class Analytics {
         })),
         this.data[identifier].paths.eventsCollectionPath,
       ),
-      addSessionData(this.data[identifier].paths.sessionCollectionPath, this.data[identifier].session),
+      addSessionData(
+        this.data[identifier].paths.sessionCollectionPath,
+        this.data[identifier].session,
+      ),
     ]);
-    session.removeSession(this.data[identifier].generic.csrfToken);
+    if (this.data[identifier]?.generic?.csrfToken)
+      session.removeSession(this.data[identifier].generic.csrfToken);
     delete this.data[identifier];
   }
   async closeSession(data: FEventData): Promise<void> {
     const identifier = data.key;
     if (!this.data[identifier]) return;
-    this.data[identifier].session.latestDisconnectedAt = firestore.Timestamp.now();
+    this.data[identifier].session.latestDisconnectedAt =
+      firestore.Timestamp.now();
     this.data[identifier].session.latestDuration =
-      (this.data[identifier].session.latestDisconnectedAt.toMillis() - this.data[identifier].session.latestConnectedAt.toMillis()) / 1000;
+      (this.data[identifier].session.latestDisconnectedAt.toMillis() -
+        this.data[identifier].session.latestConnectedAt.toMillis()) /
+      1000;
 
     // View Details
     this.data[identifier].generic.workViewed = data.workViewed;
@@ -342,7 +422,8 @@ class Analytics {
         contactViewed: this.data[identifier].generic.contactViewed ?? false,
         projectsViewed: this.data[identifier].generic.projectsViewed ?? false,
         videosViewed: this.data[identifier].generic.videosViewed ?? false,
-        testimonialsViewed: this.data[identifier].generic.testimonialsViewed ?? false,
+        testimonialsViewed:
+          this.data[identifier].generic.testimonialsViewed ?? false,
         techStackViewed: this.data[identifier].generic.techStackViewed ?? false,
       }),
       addEvents(
@@ -355,7 +436,10 @@ class Analytics {
         })),
         this.data[identifier].paths.eventsCollectionPath,
       ),
-      addSessionData(this.data[identifier].paths.sessionCollectionPath, this.data[identifier].session),
+      addSessionData(
+        this.data[identifier].paths.sessionCollectionPath,
+        this.data[identifier].session,
+      ),
     ]);
 
     delete this.data[identifier];
@@ -364,11 +448,11 @@ class Analytics {
 
 const analytics = new Analytics();
 
-const operationHandler = async <T extends IFEGeo | FEventData>(
+const operationHandler = async <T extends IFEGeo | void>(
   opType: string,
   csrfToken: string,
   ua: string,
-  opProps: T,
+  opProps?: T,
 ): Promise<{ error: boolean; data?: string | IData }> => {
   switch (opType) {
     case supportedOperations.start: {
@@ -380,6 +464,7 @@ const operationHandler = async <T extends IFEGeo | FEventData>(
         fp_visitorID: (opProps as IFEGeo).fp_visitorID,
       };
       return analytics.createEntity(reqd).then(async res => {
+        session.updateSession(csrfToken, { ua, identifier: res });
         if (!opProps) return { error: true };
         await analytics.upsertGeoData(res, opProps as IFEGeo);
         return { error: false, data: res };
@@ -393,8 +478,11 @@ const operationHandler = async <T extends IFEGeo | FEventData>(
       };
     }
     case supportedOperations.forceClose: {
-      if (!opProps) return { error: true };
-      await analytics.closeSessionAbruptly(opProps as FEventData);
+      const activeSession = session.getSession(csrfToken);
+      if (!activeSession?.identifier) return { error: true };
+      const data = analytics.getSessionData(activeSession.identifier);
+      if (!data) return { error: true };
+      await analytics.closeSessionAbruptly(data as FEventData);
       return {
         error: false,
       };
