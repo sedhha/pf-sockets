@@ -24,7 +24,12 @@ app.ws('/track', (ws, req) => {
     // const { opType } = req.query;
     // if (response.closeConnection) ws.close();
     if (!response.actionType || !response.csrf) ws.close();
-    const result = await operationHandler(response.actionType, response.csrf, ua, response.body);
+    const result = await operationHandler(
+      response.actionType,
+      response.csrf,
+      ua,
+      response.body,
+    );
     ws.send(
       JSON.stringify({
         status: response.status,

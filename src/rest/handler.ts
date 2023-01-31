@@ -6,7 +6,12 @@ import { containsSomeFromExpected } from '@/utils/dev-utils';
 
 const addSession: IApiHandler<string> = async (req: Request) => {
   const userAgent = req.headers['user-agent']?.toLowerCase() ?? '';
-  if (req.method !== 'GET' || (!req.headers['sec-ch-ua-platform'] && !containsSomeFromExpected(userAgent)) || !req.headers['user-agent'])
+  if (
+    req.method !== 'GET' ||
+    (!req.headers['sec-ch-ua-platform'] &&
+      !containsSomeFromExpected(userAgent)) ||
+    !req.headers['user-agent']
+  )
     return {
       status: 422,
       errored: true,

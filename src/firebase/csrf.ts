@@ -14,7 +14,7 @@ class CSRFSession {
   }
   getSession(key: string, ua: string) {
     const sessionUa = this.data[key];
-    return ua.toLowerCase() === sessionUa.toLowerCase();
+    return ua?.toLowerCase() === sessionUa?.toLowerCase();
   }
 }
 
