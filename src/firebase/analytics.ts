@@ -101,12 +101,17 @@ const initiateGeoEntry = async (path: string, data: IAnalyticsCollection) => {
           Object.entries(data).filter(([_, value]) => value != null),
         );
         if (snapshot.exists)
-          await store.doc(path).update(filteredData as Record<string, any>);
+          await store.doc(path).update({
+            ...filteredData,
+            lastModified: firestore.Timestamp.now(),
+          } as Record<string, any>);
         else {
           const filteredData = Object.fromEntries(
             Object.entries(data).filter(([_, value]) => value != null),
           );
-          await store.doc(path).set(filteredData);
+          await store
+            .doc(path)
+            .set({ ...filteredData, lastModified: firestore.Timestamp.now() });
         }
       }))
   );
@@ -122,7 +127,10 @@ const updateGeoEntry = async (path: string, data: IViewedData) =>
         Object.entries(data).filter(([key, value]) => value != null),
       );
       if (snapshot.exists)
-        store.doc(path).update(filteredData as Record<string, any>);
+        store.doc(path).update({
+          ...filteredData,
+          lastModified: firestore.Timestamp.now(),
+        } as Record<string, any>);
     }));
 
 const getInitEntry = async (
