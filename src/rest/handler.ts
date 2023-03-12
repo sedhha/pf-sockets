@@ -33,10 +33,20 @@ const getSession: IApiHandler<null> = async (req: Request) => {
     status: activeSession ? 200 : 404,
   };
 };
+const pingRoute: IApiHandler<string> = async () => {
+  return {
+    errored: false,
+    status: 200,
+    json: `Pong @ ${Date.now()}`,
+  };
+};
 
 const handler = {
   addSession: withGenericIntercept(addSession),
   getSession: withGenericIntercept(getSession),
+
+  // Fully Open Routes
+  pingRoute: withGenericIntercept(pingRoute),
 };
 
 export default handler;
