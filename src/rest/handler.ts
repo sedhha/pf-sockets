@@ -37,7 +37,7 @@ const pingRoute: IApiHandler<string> = async () => {
   return {
     errored: false,
     status: 200,
-    json: `Pong @ ${Date.now()}`,
+    json: `Pong @ ${new Date().toLocaleString()}`,
   };
 };
 
