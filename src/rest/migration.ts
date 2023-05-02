@@ -35,7 +35,7 @@ const uploadToSB: IApiHandler<unknown> = async () => {
 
 const upsertASampleEvent: IApiHandler<unknown> = async () => {
   return handleNavigationEvent({
-    viewedSections: { about: true, workExperience: true, projects: true },
+    viewedSections: { About: true },
     visitorID: 'ajkK8iXHlm5Vt3iNjTkE',
   }).then(res => {
     return {

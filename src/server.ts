@@ -9,7 +9,7 @@ import statsApp from '@/rest/stats';
 import migrationApp from '@/rest/dev';
 import withCSRFProtect from '@/middlewares/wsCSRFProtect';
 import { IWSResult } from '@/interfaces/webSocket';
-import { IFEGeo, FEventData } from '@/interfaces/analytics';
+import { IExpectedWSPayload } from '@/interfaces/analytics';
 import operationHandler, { IData } from '@/firebase/analytics';
 import { supportedOperations } from '@/firebase/constants';
 import { info } from './utils/dev-utils';
@@ -34,7 +34,7 @@ app.ws('/track', (ws, req) => {
     ws.close();
   }
   ws.on('message', async (msg: string) => {
-    const response = withCSRFProtect<IFEGeo | FEventData>({
+    const response = withCSRFProtect<IExpectedWSPayload>({
       ua,
       message: msg,
     });

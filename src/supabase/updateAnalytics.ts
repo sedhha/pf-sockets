@@ -1,20 +1,17 @@
 import Admin from '@/supabase/index';
-import { z } from 'zod';
-import { schemas, tableNames, columns } from '@/supabase/constants';
+import { tableNames, columns } from '@/supabase/constants';
 import { info } from '@/utils/dev-utils';
-const INavigationEvent = z.object({
-  viewedSections: z.record(z.boolean()),
-  visitorID: z.string().optional(),
-});
-type INavigationEvent = z.infer<typeof INavigationEvent>;
-const INavigationEntry = schemas[tableNames.NAVIGATION];
-type INavigationEntry = z.infer<typeof INavigationEntry>;
+import {
+  INavigationEvent,
+  INavigationEventZod,
+  INavigationEntry,
+} from '@/interfaces/analytics';
 
 export const handleNavigationEvent = async (
   event: INavigationEvent,
 ): Promise<{ error: boolean }> => {
   try {
-    const payload = INavigationEvent.parse(event);
+    const payload = INavigationEventZod.parse(event);
     const { viewedSections, visitorID } = payload;
     let viewPayload: INavigationEntry[] = [];
     if (!visitorID) {

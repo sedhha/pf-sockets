@@ -9,6 +9,8 @@ import {
   IAnalyticsInit,
   FEventData,
   IEventData,
+  IExpectedWSPayload,
+  INavigationEvent,
 } from '@/interfaces/analytics';
 import { firestore } from 'firebase-admin';
 import crypto from 'crypto';
@@ -21,6 +23,7 @@ import {
 } from '@/firebase/constants';
 import { store } from '@/firebase/index';
 import session from './csrf';
+import { handleNavigationEvent } from '@/supabase/updateAnalytics';
 
 interface IPaths {
   geoCollectionPath: string;
@@ -456,7 +459,7 @@ class Analytics {
 
 const analytics = new Analytics();
 
-const operationHandler = async <T extends IFEGeo | void>(
+const operationHandler = async <T extends IExpectedWSPayload>(
   opType: string,
   csrfToken: string,
   ua: string,
@@ -495,10 +498,14 @@ const operationHandler = async <T extends IFEGeo | void>(
         error: false,
       };
     }
-    case supportedOperations.casualEventsNavigations: {
+    case supportedOperations.viewEvents: {
       const activeSession = session.getSession(csrfToken);
       if (!activeSession?.identifier || !opProps) return { error: true };
-      return { error: true };
+      const result = await handleNavigationEvent({
+        viewedSections: opProps,
+        visitorID: activeSession.identifier,
+      } as INavigationEvent);
+      return result;
     }
     default:
       return { error: true };

@@ -107,45 +107,9 @@ const supportedOperations = {
   close: 'close',
   forceClose: 'forceClose',
   closedByServer: 'closedByServer',
-  casualEventsNavigations: 'casualEventsNavigations',
+  viewEvents: 'viewEvents',
 } as const;
-const attributes = {
-  About: 'about',
-  WorkExperience: 'work-experience',
-  Contact: 'contact',
-  Projects: 'projects',
-  Awards: 'awards',
-  Blog: 'blog',
-  Videos: 'videos',
-  Testimonials: 'testimonials',
-  TechStack: 'tech-stack',
-};
 
-const clickActions = {
-  workExperienceNext: 'workExperienceNext',
-  workExperiencePrevious: 'workExperiencePrevious',
-  authenticateAndChat: 'authenticateAndChat',
-  unauthenticatedAndChat: 'unauthenticatedAndChat',
-  successContactFormSubmission: 'successContactFormSubmission',
-  failedContactFormSubmission: 'failedContactFormSubmission',
-  projectsNext: 'projectsNext',
-  projectsPrevious: 'projectsPrevious',
-  cardDetails: 'cardDetails',
-  awardsAndExperiencesNext: 'awardsAndExperiencesNext',
-  awardsAndExperiencesPrevious: 'awardsAndExperiencesPrevious',
-  awardCardDetails: 'awardCardDetails',
-  videoPlayEvent: 'videoPlayEvent',
-  onClickVideos: 'onClickVideos',
-  testimonialsNext: 'testimonialsNext',
-  testimonialsPrevious: 'testimonialsPrevious',
-  testimonialReferrerProfiles: 'testimonialReferrerProfiles',
-  techStackSearch: 'techStackSearch',
-};
-
-export type SupportedOps = keyof typeof supportedOperations;
-export type AttributeValue = (typeof attributes)[keyof typeof attributes];
-export type ClickActionAttributes =
-  (typeof clickActions)[keyof typeof clickActions];
 export {
   supportedOperations,
   formRootMessagesPath,

@@ -1,5 +1,6 @@
-import { AttributeValue, ClickActionAttributes } from '@/firebase/constants';
 import { Timestamp } from 'firebase-admin/firestore';
+import { z } from 'zod';
+import { schemas, tableNames } from '@/supabase/constants';
 interface IGeoAPI {
   ip: string;
   network: string;
@@ -353,80 +354,6 @@ interface IFingerprintAPI {
 
 /*--------------------------Static Content ----------------------------------*/
 
-interface INavigations {
-  shouldSend: boolean;
-  latestViewed: AttributeValue;
-  viewedSections: Record<AttributeValue, boolean>;
-}
-
-interface IThemeInteractions {
-  darkModeCount: number;
-  darkMode: boolean;
-  shouldSend: boolean;
-}
-
-interface IClickInteractions {
-  clickIdentifier: string;
-  clickPerformedAt: number;
-  clickedTimes: number;
-  clickDescription: string;
-  identifier1?: string;
-  identifier2?: string;
-  identifier3?: string;
-  identifier4?: string;
-}
-
-interface ISoundInteractions {
-  playedSound: boolean;
-  playedSoundDuration: number;
-  shouldSend: boolean;
-  playedTimes: number;
-}
-
-interface IBlogDetails {
-  category: string;
-  blogID: string;
-  socialHandle: string;
-  url: string;
-}
-
-interface IBlogView {
-  blogID: string;
-  category: string;
-  timesClicked: number;
-  actionType: 'rank-navigate' | 'category-navigate' | 'blog-navigate';
-}
-
-interface IExtraDetails {
-  userID?: string;
-  fingerprint: string;
-  clickCount: number;
-}
-
-interface IBlogViews {
-  ranksViewed: Record<string, IBlogView>;
-  socialClicks: Record<string, IBlogDetails & IExtraDetails>;
-  shouldSend: boolean;
-}
-
-interface IContactFormTrigger {
-  name?: string;
-  email?: string;
-  subject?: string;
-  message?: string;
-  shouldSend: boolean;
-}
-
-type StaticContent = {
-  navigations: INavigations;
-  themes: IThemeInteractions;
-  sounds: ISoundInteractions;
-  clicks: Record<ClickActionAttributes, IClickInteractions>;
-  blogs: IBlogViews;
-  contacts: IContactFormTrigger;
-  viewedBackImage: boolean;
-};
-
 export type {
   IAnalyticsData,
   IEventData,
@@ -438,5 +365,55 @@ export type {
   ISessionCollection,
   IEventsCollection,
   IFEStartSession,
-  StaticContent,
 };
+
+/*-----------------------------------Supabase Client ---------------------------*/
+const allowedActions = new Set([
+  // View Actions
+  'about',
+  'work-experience',
+  'contact',
+  'projects',
+  'awards',
+  'blog',
+  'videos',
+  'testimonials',
+  'tech-stack',
+  // Click Actions
+  'workExperienceNext',
+  'workExperiencePrevious',
+  'authenticateAndChat',
+  'unauthenticatedAndChat',
+  'successContactFormSubmission',
+  'failedContactFormSubmission',
+  'projectsNext',
+  'projectsPrevious',
+  'cardDetails',
+  'awardsAndExperiencesNext',
+  'awardsAndExperiencesPrevious',
+  'awardCardDetails',
+  'videoPlayEvent',
+  'onClickVideos',
+  'testimonialsNext',
+  'testimonialsPrevious',
+  'testimonialReferrerProfiles',
+  'techStackSearch',
+]);
+export const INavigationEventZod = z.object({
+  viewedSections: z.record(z.boolean()).refine(obj => {
+    const keys = Object.keys(obj);
+    for (const key of keys) {
+      if (!allowedActions.has(key)) {
+        return false;
+      }
+    }
+    return true;
+  }),
+  visitorID: z.string().optional(),
+});
+export type INavigationEvent = z.infer<typeof INavigationEventZod>;
+const INavigationEntry = schemas[tableNames.NAVIGATION];
+export type INavigationEntry = z.infer<typeof INavigationEntry>;
+
+/*-------------------------------------Derived Types---------------------------*/
+export type IExpectedWSPayload = IFEGeo | FEventData | INavigationEvent | void;
