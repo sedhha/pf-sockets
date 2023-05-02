@@ -1,3 +1,4 @@
+import { AttributeValue, ClickActionAttributes } from '@/firebase/constants';
 import { Timestamp } from 'firebase-admin/firestore';
 interface IGeoAPI {
   ip: string;
@@ -350,6 +351,82 @@ interface IFingerprintAPI {
   visitorId: string;
 }
 
+/*--------------------------Static Content ----------------------------------*/
+
+interface INavigations {
+  shouldSend: boolean;
+  latestViewed: AttributeValue;
+  viewedSections: Record<AttributeValue, boolean>;
+}
+
+interface IThemeInteractions {
+  darkModeCount: number;
+  darkMode: boolean;
+  shouldSend: boolean;
+}
+
+interface IClickInteractions {
+  clickIdentifier: string;
+  clickPerformedAt: number;
+  clickedTimes: number;
+  clickDescription: string;
+  identifier1?: string;
+  identifier2?: string;
+  identifier3?: string;
+  identifier4?: string;
+}
+
+interface ISoundInteractions {
+  playedSound: boolean;
+  playedSoundDuration: number;
+  shouldSend: boolean;
+  playedTimes: number;
+}
+
+interface IBlogDetails {
+  category: string;
+  blogID: string;
+  socialHandle: string;
+  url: string;
+}
+
+interface IBlogView {
+  blogID: string;
+  category: string;
+  timesClicked: number;
+  actionType: 'rank-navigate' | 'category-navigate' | 'blog-navigate';
+}
+
+interface IExtraDetails {
+  userID?: string;
+  fingerprint: string;
+  clickCount: number;
+}
+
+interface IBlogViews {
+  ranksViewed: Record<string, IBlogView>;
+  socialClicks: Record<string, IBlogDetails & IExtraDetails>;
+  shouldSend: boolean;
+}
+
+interface IContactFormTrigger {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+  shouldSend: boolean;
+}
+
+type StaticContent = {
+  navigations: INavigations;
+  themes: IThemeInteractions;
+  sounds: ISoundInteractions;
+  clicks: Record<ClickActionAttributes, IClickInteractions>;
+  blogs: IBlogViews;
+  contacts: IContactFormTrigger;
+  viewedBackImage: boolean;
+};
+
 export type {
   IAnalyticsData,
   IEventData,
@@ -361,4 +438,5 @@ export type {
   ISessionCollection,
   IEventsCollection,
   IFEStartSession,
+  StaticContent,
 };

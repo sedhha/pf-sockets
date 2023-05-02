@@ -23,6 +23,7 @@
     "paths": {
       "@/utils/*": ["utils/*"],
       "@/firebase/*": ["firebase/*"],
+      "@/supabase/*": ["supabase/*"],
       "@/interfaces/*": ["interfaces/*"],
       "@/constants/*": ["constants/*"],
       "@/middlewares/*": ["middlewares/*"],

@@ -495,6 +495,11 @@ const operationHandler = async <T extends IFEGeo | void>(
         error: false,
       };
     }
+    case supportedOperations.casualEventsNavigations: {
+      const activeSession = session.getSession(csrfToken);
+      if (!activeSession?.identifier || !opProps) return { error: true };
+      return { error: true };
+    }
     default:
       return { error: true };
   }
