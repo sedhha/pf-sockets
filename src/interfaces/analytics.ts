@@ -414,6 +414,11 @@ export const INavigationEventZod = z.object({
 export type INavigationEvent = z.infer<typeof INavigationEventZod>;
 const INavigationEntry = schemas[tableNames.NAVIGATION];
 export type INavigationEntry = z.infer<typeof INavigationEntry>;
+export type IUserDetails = {
+  visitorID: string;
+  uid?: string;
+  user?: string;
+};
 
 /*-------------------------------------Derived Types---------------------------*/
 export type IExpectedWSPayload = IFEGeo | FEventData | INavigationEvent | void;

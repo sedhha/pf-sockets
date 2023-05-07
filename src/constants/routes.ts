@@ -6,6 +6,7 @@ const REST_ROUTES = {
   GET_ALL_FIREBASE_DOCS: '/get-firebase-docs',
   UPLOAD_TO_SB: '/upload-to-sb',
   ADD_SAMPLE_NAVIGATION: '/add-sample-navigation',
+  DEBUG: '/debug',
   PING: '/ping',
 };
 

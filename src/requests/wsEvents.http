@@ -1,0 +1,6 @@
+POST http://localhost:4200/dev/debug?identifier=abcdef&opType=viewEvents
+Content-Type: application/json
+
+{
+    "name": "222"
+}

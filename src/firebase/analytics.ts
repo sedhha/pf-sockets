@@ -23,7 +23,8 @@ import {
 } from '@/firebase/constants';
 import { store } from '@/firebase/index';
 import session from './csrf';
-import { handleNavigationEvent } from '@/supabase/updateAnalytics';
+import { eventInterceptor } from '@/supabase/analytics';
+import { IWSResult } from '@/interfaces/webSocket';
 
 interface IPaths {
   geoCollectionPath: string;
@@ -459,12 +460,12 @@ class Analytics {
 
 const analytics = new Analytics();
 
-const operationHandler = async <T extends IExpectedWSPayload>(
+const operationHandler = async <T extends IExpectedWSPayload, T2>(
   opType: string,
   csrfToken: string,
   ua: string,
   opProps?: T,
-): Promise<{ error: boolean; data?: string | IData }> => {
+): Promise<{ error: boolean; data?: string | IData | IWSResult<T2> }> => {
   switch (opType) {
     case supportedOperations.start: {
       if (!opProps) return { error: true };
@@ -501,11 +502,16 @@ const operationHandler = async <T extends IExpectedWSPayload>(
     case supportedOperations.viewEvents: {
       const activeSession = session.getSession(csrfToken);
       if (!activeSession?.identifier || !opProps) return { error: true };
-      const result = await handleNavigationEvent({
-        viewedSections: opProps,
-        visitorID: activeSession.identifier,
-      } as INavigationEvent);
-      return result;
+
+      const result = (await eventInterceptor(
+        activeSession.identifier,
+        opProps,
+        opType,
+      )) as IWSResult<T2>;
+      return {
+        error: result.status > 299,
+        data: result,
+      };
     }
     default:
       return { error: true };

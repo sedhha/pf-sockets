@@ -2,10 +2,11 @@ import { z } from 'zod';
 const tableNames = {
   NAVIGATION: 'analytics-navigation',
   USERS: 'analytics-users',
+  RECURRING: 'analytics-recurring',
 };
 
 const columns = {
-  [tableNames.USERS]: {
+  users: {
     visitorID: 'visitorID',
     user: 'user',
     uid: 'uid',
@@ -64,22 +65,30 @@ const columns = {
     utc_offset: 'utc_offset',
     version: 'version',
   },
-  [tableNames.NAVIGATION]: {
+  navigation: {
+    visitorID: 'visitorID',
+    viewName: 'viewName',
+    viewedAt: 'viewedAt',
+  },
+  recurring: {
     user: 'user',
     visitorID: 'visitorID',
     uid: 'uid',
     viewName: 'viewName',
-    viewedAt: 'viewedAt',
+    viewCount: 'viewCount',
   },
 };
 
 const schemas = {
   [tableNames.NAVIGATION]: z.object({
-    [columns[tableNames.NAVIGATION].user]: z.string().optional(),
     [columns[tableNames.NAVIGATION].visitorID]: z.string(),
-    [columns[tableNames.NAVIGATION].uid]: z.string().optional(),
     [columns[tableNames.NAVIGATION].viewName]: z.string(),
     [columns[tableNames.NAVIGATION].viewedAt]: z.string(),
+  }),
+  [tableNames.RECURRING]: z.object({
+    [columns[tableNames.RECURRING].visitorID]: z.string().optional(),
+    [columns[tableNames.RECURRING].viewName]: z.string(),
+    [columns[tableNames.RECURRING].viewCount]: z.string(),
   }),
 };
 

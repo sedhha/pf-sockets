@@ -1,0 +1,4 @@
+export enum identifiers {
+  EVENT_LOG_SUCCESS = 'EVENT_LOG_SUCCESS',
+  EVENT_LOG_ERROR = 'EVENT_LOG_ERROR',
+}
