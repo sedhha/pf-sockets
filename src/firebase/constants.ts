@@ -108,6 +108,10 @@ const supportedOperations = {
   forceClose: 'forceClose',
   closedByServer: 'closedByServer',
   viewEvents: 'viewEvents',
+  recordGeoData: 'recordGeoData',
+
+  // dev specific routes
+  viewUser: 'viewUser',
 } as const;
 
 export {

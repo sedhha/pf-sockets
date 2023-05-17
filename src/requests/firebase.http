@@ -1,14 +1,5 @@
 @BASE_URL=http://localhost:4200
 
-GET {{BASE_URL}}/dev/get-firebase-docs?dbName=prod-geoAnalytics&getFromCollection=true
-
+GET {{BASE_URL}}/dev/get-firebase-collection?collectionName=prod-geoAnalytics
 ###
-
-POST {{BASE_URL}}/dev/upload-to-sb
-Content-Type: application/json
-
-###
-GET {{BASE_URL}}/dev/add-sample-navigation
-
-###
-GET {{BASE_URL}}/dev/debug
+GET {{BASE_URL}}/dev/migrate-from-firebase-collection?collectionName=prod-geoAnalytics

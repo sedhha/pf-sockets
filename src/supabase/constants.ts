@@ -1,4 +1,3 @@
-import { z } from 'zod';
 const tableNames = {
   NAVIGATION: 'analytics-navigation',
   USERS: 'analytics-users',
@@ -70,26 +69,6 @@ const columns = {
     viewName: 'viewName',
     viewedAt: 'viewedAt',
   },
-  recurring: {
-    user: 'user',
-    visitorID: 'visitorID',
-    uid: 'uid',
-    viewName: 'viewName',
-    viewCount: 'viewCount',
-  },
 };
 
-const schemas = {
-  [tableNames.NAVIGATION]: z.object({
-    [columns[tableNames.NAVIGATION].visitorID]: z.string(),
-    [columns[tableNames.NAVIGATION].viewName]: z.string(),
-    [columns[tableNames.NAVIGATION].viewedAt]: z.string(),
-  }),
-  [tableNames.RECURRING]: z.object({
-    [columns[tableNames.RECURRING].visitorID]: z.string().optional(),
-    [columns[tableNames.RECURRING].viewName]: z.string(),
-    [columns[tableNames.RECURRING].viewCount]: z.string(),
-  }),
-};
-
-export { tableNames, columns, schemas };
+export { tableNames, columns };

@@ -1,5 +1,6 @@
 import { IWSResult } from '@/interfaces/webSocket';
 import { identifiers } from './utils';
+
 const viewEvent = (
   visitorID: string,
   payload: { name: string },

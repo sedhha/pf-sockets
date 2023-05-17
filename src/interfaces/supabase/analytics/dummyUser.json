@@ -1,15 +1,3 @@
-POST http://localhost:4200/dev/debug?identifier=abcdef&opType=viewEvents
-Content-Type: application/json
-
-{
-    "name": "222"
-}
-
-###
-
-POST http://localhost:4200/dev/debug?identifier=abcdef&opType=recordGeoData
-Content-Type: application/json
-
 {
     "visitorID": "ajkK8iXHlm5Vt3iNjTkE",
     "user": "Unknown",
@@ -50,7 +38,7 @@ Content-Type: application/json
     "fp_longitude": 9.1827,
     "fp_metaVersion": "v1.1.1340+b8b1d05c",
     "fp_postCode": "70567",
-    "fp_subDivision": "[{\"isoCode\":\"BW\",\"name\":\"Baden-Wurttemberg\"}]",
+    "fp_subDivision": [{"isoCode":"BW","name":"Baden-Wurttemberg"}],
     "fp_timezone": "Europe/Berlin",
     "in_eu": true,
     "ip": "2001:9e8:8c0e:6800:6c53:3da6:afd1:dbcc",
@@ -69,4 +57,3 @@ Content-Type: application/json
     "utc_offset": "+0200",
     "version": "IPv6"
   }
-

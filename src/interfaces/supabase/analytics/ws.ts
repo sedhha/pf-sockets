@@ -6,10 +6,16 @@ interface IEventRequest<T> {
   event: SupportedEvents;
 }
 
+export type MetaProps = {
+  csrfToken: string;
+  ua: string;
+};
+
 type EventLogCallback = <T1, T2>(
   visitorID: string,
   payload: T1,
-) => IWSResult<T2>;
+  metaProps?: MetaProps,
+) => Promise<IWSResult<T2>>;
 
 interface ILogEvent<T> {
   payload: T;

@@ -1,6 +1,5 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { z } from 'zod';
-import { schemas, tableNames } from '@/supabase/constants';
 interface IGeoAPI {
   ip: string;
   network: string;
@@ -412,8 +411,6 @@ export const INavigationEventZod = z.object({
   visitorID: z.string().optional(),
 });
 export type INavigationEvent = z.infer<typeof INavigationEventZod>;
-const INavigationEntry = schemas[tableNames.NAVIGATION];
-export type INavigationEntry = z.infer<typeof INavigationEntry>;
 export type IUserDetails = {
   visitorID: string;
   uid?: string;

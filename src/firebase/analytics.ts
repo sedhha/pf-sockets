@@ -10,7 +10,6 @@ import {
   FEventData,
   IEventData,
   IExpectedWSPayload,
-  INavigationEvent,
 } from '@/interfaces/analytics';
 import { firestore } from 'firebase-admin';
 import crypto from 'crypto';

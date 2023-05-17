@@ -8,6 +8,10 @@ const REST_ROUTES = {
   ADD_SAMPLE_NAVIGATION: '/add-sample-navigation',
   DEBUG: '/debug',
   PING: '/ping',
+
+  // dev routes
+  GET_FIREBASE_COLLECTION: '/get-firebase-collection',
+  MIGRATE_FROM_FIREBASE_COLLECTION: '/migrate-from-firebase-collection',
 };
 
 const ROOT_ROUTES = {
